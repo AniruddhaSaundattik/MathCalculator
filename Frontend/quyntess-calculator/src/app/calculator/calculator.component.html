@@ -1,0 +1,52 @@
+<form class="calc">
+  <div>
+    <div class="form-group center">
+      <label for="request1" class="lbl-margin">Request 1: </label>
+      <input type="text" class="form-control" style="width: 50%" id="request1" placeholder="Enter expression here.."
+             [(ngModel)]="expr1" name="expr1">
+    </div>
+    <div class="form-group center input-spacing">
+      <label for="request2" class="lbl-margin">Request 2: </label>
+      <input type="text" class="form-control" style="width: 50%" id="request2" placeholder="Enter expression here.."
+             [(ngModel)]="expr2" name="expr2">
+    </div>
+  </div>
+  <div class="btn-center">
+    <button class="btn btn-lg btn-outline-primary" data-toggle="modal" data-target="#exampleModal" [disabled]="!expr1 && !expr2"
+            (click)="calcExprs()">Calculate
+    </button>
+    <button type="button" class="btn btn-outline-success btn-space" (click)="resetExpr()">Reset</button>
+  </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+       aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Result</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" *ngIf="resp && resp.result && resp.result.length > 0; else error">
+          <div>
+            <span>Request 1 result: </span>
+            <span>{{resp.result[0]}}</span>
+          </div>
+          <div>
+            <span>Request 2 result: </span>
+            <span>{{resp.result[1]}}</span>
+          </div>
+        </div>
+        <ng-template #error>
+          <div class="modal-body">
+            <span>{{errorMessage}}</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</form>
+
+
+
+
