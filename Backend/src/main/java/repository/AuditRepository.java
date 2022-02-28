@@ -19,31 +19,35 @@ public class AuditRepository {
     public void addTrace(String[] formulae) throws ClassNotFoundException, SQLException {
         conn = getConnection();
         maxId = getLastSeq();
+
         PreparedStatement statement = conn.prepareStatement(config.getPropertyValue("query.insert"));
         for (int i=0; i<formulae.length; i++) {
             statement.setInt(1, maxId+1+i);
             statement.setString(2, formulae[i]);
             statement.addBatch();
         }
+
         statement.executeBatch();
         logger.info("All audit traces created");
     }
 
     public void updateTrace(String[] result) throws SQLException, ClassNotFoundException {
-        Connection conn = getConnection();
+        conn = getConnection();
+
         PreparedStatement statement = conn.prepareStatement(config.getPropertyValue("query.update"));
         for (int i=0; i<result.length; i++) {
             statement.setString(1, result[i]);
             statement.setInt(2, maxId+1+i);
             statement.addBatch();
         }
+
         statement.executeBatch();
         logger.info("All traces updated");
     }
 
     public int getLastSeq() throws SQLException, ClassNotFoundException {
         logger.info("Getting the last audit index");
-        Connection conn = getConnection();
+        conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(config.getPropertyValue("query.maxId"));
         ResultSet resultSet = stmt.executeQuery();
         return resultSet.getInt(1);

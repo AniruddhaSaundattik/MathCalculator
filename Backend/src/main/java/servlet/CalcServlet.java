@@ -1,6 +1,7 @@
 package servlet;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import config.CalcConfig;
 import model.Request;
 import model.Result;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 @WebServlet("/calc")
@@ -25,8 +27,8 @@ public class CalcServlet extends HttpServlet {
     CalcService service;
     CalcConfig config;
 
-    public CalcServlet(){
-        super();
+    @Override
+    public void init() {
         this.config = new CalcConfig();
         this.service = new CalcService(config);
     }
@@ -38,16 +40,26 @@ public class CalcServlet extends HttpServlet {
             String requestBody = getBody(request);
             Request input = gson.fromJson(requestBody, Request.class);
 
-            response.setContentType(APPL_JSON);
-            PrintWriter out = response.getWriter();
-
             Result result = service.calcWithAudit(input);
+
+            PrintWriter out = response.getWriter();
+            response.setContentType(APPL_JSON);
             response.setStatus(result.getResponseCode());
             out.print(gson.toJson(result));
             out.flush();
+
+        } catch (JsonSyntaxException e) {
+            logger.severe("Request payload is not correct" + e.getMessage());
+            response.setStatus(400);
         } catch (Exception e) {
             logger.severe("Error while calculating the expressions: " + e.getMessage());
+            response.setStatus(500);
         }
+    }
+
+    @Override
+    public void destroy() {
+        this.service.closeConnections();
     }
 
     private String getBody(HttpServletRequest request) throws IOException {

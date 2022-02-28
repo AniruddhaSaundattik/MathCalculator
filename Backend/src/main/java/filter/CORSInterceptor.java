@@ -27,8 +27,8 @@ public class CORSInterceptor implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-
         String requestOrigin = request.getHeader(ORIGIN);
+
         if (isAllowedOrigin(requestOrigin)) {
             ((HttpServletResponse) servletResponse).addHeader(allowOrigin, requestOrigin);
             ((HttpServletResponse) servletResponse).addHeader(allowHeader, "*");
@@ -48,7 +48,7 @@ public class CORSInterceptor implements Filter {
     private boolean isAllowedOrigin(String origin) {
         String[] allowedOrigins = config.getPropertyValue("client.whitelist").split(",");
         for (String allowedOrigin : allowedOrigins) {
-            if (origin.equals(allowedOrigin)) return true;
+            if (origin != null && origin.equals(allowedOrigin)) return true;
         }
         return false;
     }

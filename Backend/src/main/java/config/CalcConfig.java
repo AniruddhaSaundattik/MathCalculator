@@ -16,10 +16,12 @@ public class CalcConfig {
 
     public CalcConfig() {
         this.properties = new HashMap<>();
+
         Properties servProps = new Properties();
         try {
             String rootPath = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("")).getPath();
             servProps.load(new FileInputStream(rootPath + "servlet.properties"));
+
             for (String property : servProps.stringPropertyNames()) {
                 properties.put(property, servProps.getProperty(property));
             }
