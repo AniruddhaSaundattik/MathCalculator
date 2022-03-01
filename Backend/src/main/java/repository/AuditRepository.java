@@ -50,7 +50,14 @@ public class AuditRepository {
         conn = getConnection();
         PreparedStatement stmt = conn.prepareStatement(config.getPropertyValue("query.maxId"));
         ResultSet resultSet = stmt.executeQuery();
-        return resultSet.getInt(1);
+        int maxid = 0;
+        try {
+            resultSet.next();
+            maxid = resultSet.getInt(1);
+        } catch (Exception e) {
+            logger.info("No table entries found");
+        }
+        return maxid;
     }
 
     public void closeConnection() throws SQLException {
